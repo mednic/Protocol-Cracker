@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+#           /\
+#          / \\ /\
+#   /\  /\/  \\V  \/\
+#  / \\/ // \\\\\ \\ \/\
+# // //The-Dark-Hall\/ \\
+#/https://github.com/mednic\
 import sys
 import subprocess
 import re
