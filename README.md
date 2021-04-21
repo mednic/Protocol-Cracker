@@ -1,5 +1,5 @@
 # Protocol-Cracker
-script de automação para quebra de senhas de diversos protocolos em python 2 
+script de automação para quebra de senhas de diversos protocolos em python 2.7 
 voce pode substituir a wordlist colocando a sua no mesmo diretorio com o mesmo nome
        
        root@kali:~# git clone https://github.com/medn1c/Protocol-Cracker/
